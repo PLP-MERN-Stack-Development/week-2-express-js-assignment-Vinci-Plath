@@ -1,63 +1,162 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-2e0aaae1b6195c2367325f4f02e2d04e9abb55f0b24a779b69b11b9e10269abc.svg)](https://classroom.github.com/online_ide?assignment_repo_id=19698463&assignment_repo_type=AssignmentRepo)
-# Express.js RESTful API Assignment
+# 🛍️ Product API
 
-This assignment focuses on building a RESTful API using Express.js, implementing proper routing, middleware, and error handling.
+A RESTful API for managing products, built with **Express.js** and **MongoDB**.
 
-## Assignment Overview
+## 🚀 Features
 
-You will:
-1. Set up an Express.js server
-2. Create RESTful API routes for a product resource
-3. Implement custom middleware for logging, authentication, and validation
-4. Add comprehensive error handling
-5. Develop advanced features like filtering, pagination, and search
+- Authentication via API key
+- Full CRUD operations for products
+- Request validation with custom error handling
+- Advanced capabilities:
+  - Pagination (`page`, `limit`)
+  - Filtering by category (`?category=...`)
+  - Search by product name (`/search?name=...`)
+  - Statistics by category (`/stats`)
 
-## Getting Started
 
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Install dependencies:
-   ```
+## Setup Instructions
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd product-api
+```
+
+2. Install dependencies:
+  ```bash
    npm install
-   ```
-4. Run the server:
-   ```
-   npm start
-   ```
+  ```   
 
-## Files Included
+3. Create .env file based on .env.example:
+API_KEY=your-secret-key
+PORT=3000
 
-- `Week2-Assignment.md`: Detailed assignment instructions
-- `server.js`: Starter Express.js server file
-- `.env.example`: Example environment variables file
+4. Start the server:
+For production:
+```bash
+npm start
+```
+For development (with auto-restart via nodemon):
 
-## Requirements
+```bash
+npm run dev
+```
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Postman, Insomnia, or curl for API testing
+## 📁 Project Structure
+
+product-api/
+├── .env
+├── .env.example
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── README.md
+├── server.js
+├── insertProducts.js
+├── Week2-Assignment.pdf
+├── middleware/
+│   ├── auth.js
+│   ├── errorHandler.js
+│   ├── logger.js
+│   └── validation.js
+├── errors/
+│   ├── NotFoundError.js
+│   └── ValidationError.js
+├── models/
+│   └── Product.js
+├── routes/
+│   └── products.js
+└── .github/
+
 
 ## API Endpoints
+All requests require the header:
+`x-api-key: your-secret-key`
 
-The API will have the following endpoints:
+### 📦 Product Routes
 
-- `GET /api/products`: Get all products
-- `GET /api/products/:id`: Get a specific product
-- `POST /api/products`: Create a new product
-- `PUT /api/products/:id`: Update a product
-- `DELETE /api/products/:id`: Delete a product
+| Method | Endpoint                       | Description                            |
+|--------|--------------------------------|----------------------------------------|
+| GET    | /api/products                  | Get all products (paginated, filtered) |
+| GET    | /api/products/search           | Search products by name                |
+| GET    | /api/products/:id              | Get a single product by ID             |
+| POST   | /api/products                  | Create a new product                   |
+| PUT    | /api/products/:id              | Update an existing product             |
+| DELETE | /api/products/:id              | Delete a product                       |
+| GET    | /api/products/stats            | Get product stats by category          |
 
-## Submission
+---
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+## 🔍 Query Parameters
 
-1. Complete all the required API endpoints
-2. Implement the middleware and error handling
-3. Document your API in the README.md
-4. Include examples of requests and responses
+### `GET /api/products`
 
-## Resources
+| Param     | Description                              |
+|-----------|------------------------------------------|
+| `page`    | Page number (default: `1`)               |
+| `limit`   | Number of items per page (default: `10`) |
+| `category`| Filter products by category              |
 
-- [Express.js Documentation](https://expressjs.com/)
-- [RESTful API Design Best Practices](https://restfulapi.net/)
-- [HTTP Status Codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) 
+### `GET /api/products/search`
+
+| Param  | Description              |
+|--------|--------------------------|
+| `name` | Search term (required)   |
+
+---
+
+## 📥 Sample Requests
+
+### ✅ Create Product
+
+```bash
+curl -X POST http://localhost:3000/api/products \
+  -H 'x-api-key: your-secret-key' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Dell XPS 13",
+    "price": 1399,
+    "category": "Laptops",
+    "brand": "Dell",
+    "description": "13.4\" Laptop, Intel i7, 16GB RAM, 512GB SSD",
+    "stock": 30,
+    "images": ["https://example.com/dell-xps.jpg"],
+    "rating": 4.6,
+    "reviews": 42,
+    "isFeatured": false
+  }'
+```
+
+
+Get Paginated Products:
+```bash
+curl -X GET 'http://localhost:3000/api/products?page=1&limit=5&category=Laptops' \
+  -H 'x-api-key: your-secret-key'
+
+```
+
+  Search Products:
+```bash
+  curl -X GET 'http://localhost:3000/api/products/search?name=macbook' \
+  -H 'x-api-key: your-secret-key'
+
+
+```
+
+## Error Responses
+Status Code            	Error Type	              Description
+400                    	ValidationError	          Invalid request data
+401	                    Unauthorized	            Missing or invalid API key
+404                    	NotFoundError	            Resource not found
+500                   	InternalError	            Server error
+
+## Testing
+To run tests:
+```bash
+npm test
+```
+
+## 👤 Author
+
+**Chalonreay Bahati Kahindi**  
+GitHub: @Vinci-Plath
